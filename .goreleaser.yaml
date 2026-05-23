@@ -78,6 +78,10 @@ homebrew_casks:
       branch: main
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
     directory: Casks
+    hooks:
+      post:
+        install: |
+          system_command "/usr/bin/xattr", args: ["-d", "com.apple.quarantine", "#{staged_path}/ent"]
     homepage: "https://github.com/AWDDude/ent"
     description: "A project manager CLI — organise and navigate your projects tree"
     caveats: |
