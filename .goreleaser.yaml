@@ -1,0 +1,104 @@
+version: 2
+
+project_name: ent
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: ent
+    main: ./main.go
+    binary: ent
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w
+      - -X github.com/AWDDude/ent/cmd.Version={{.Version}}
+      - -X github.com/AWDDude/ent/cmd.Commit={{.Commit}}
+      - -X github.com/AWDDude/ent/cmd.BuildDate={{.Date}}
+
+archives:
+  - id: default
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - LICENSE*
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+snapshot:
+  version_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+  groups:
+    - title: "New Features"
+      regexp: "^feat"
+      order: 0
+    - title: "Bug Fixes"
+      regexp: "^fix"
+      order: 1
+    - title: "Other"
+      order: 999
+
+homebrew_casks:
+  - name: ent
+    binaries:
+      - ent
+    repository:
+      owner: AWDDude
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    directory: Formula
+    homepage: "https://github.com/AWDDude/ent"
+    description: "A project manager CLI — organise and navigate your projects tree"
+    caveats: |
+      Add shell integration to your rc file:
+
+        # zsh (~/.zshrc)
+        eval "$(ent completion zsh)"
+
+        # bash (~/.bashrc)
+        eval "$(ent completion bash)"
+
+        # fish (~/.config/fish/config.fish)
+        ent completion fish | source
+
+        # PowerShell ($PROFILE)
+        ent completion powershell | Out-String | Invoke-Expression
+
+release:
+  github:
+    owner: AWDDude
+    name: ent
+  draft: false
+  prerelease: auto
+  name_template: "v{{.Version}}"
