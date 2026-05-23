@@ -16,8 +16,7 @@ A fast, opinionated project manager for your terminal. `ent` keeps your projects
 ### Homebrew (macOS / Linux)
 
 ```sh
-brew tap AWDDude/tap
-brew install ent
+brew install AWDDude/tap/ent
 ```
 
 ### Download
