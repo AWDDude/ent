@@ -77,7 +77,7 @@ homebrew_casks:
       name: homebrew-tap
       branch: main
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
-    directory: Formula
+    directory: Casks
     homepage: "https://github.com/AWDDude/ent"
     description: "A project manager CLI — organise and navigate your projects tree"
     caveats: |
