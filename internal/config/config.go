@@ -65,7 +65,12 @@ func Load(flagOverride string) (*Config, error) {
 }
 
 // SettingsPath returns the platform-appropriate path to settings.json.
+// If ENT_CONFIG_PATH is set it takes precedence over all other location logic.
 func SettingsPath() (string, error) {
+	if p := os.Getenv("ENT_CONFIG_PATH"); p != "" {
+		return p, nil
+	}
+
 	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
 		return filepath.Join(xdg, "ent", "settings.json"), nil
 	}
@@ -96,9 +101,17 @@ func loadSettings() (*Settings, error) {
 	}
 
 	data, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		// No config file yet — write a default one so the user has a starting point.
+		defaults := &Settings{ProjectsRoot: "~/projects"}
+		if writeErr := writeDefaultSettings(path, defaults); writeErr != nil {
+			// Non-fatal: carry on with the in-memory defaults.
+			return defaults, nil
+		}
+		return defaults, nil
+	}
 	if err != nil {
-		// Missing file is not an error; we just use defaults.
-		return &Settings{}, nil
+		return nil, err
 	}
 
 	var s Settings
@@ -106,6 +119,19 @@ func loadSettings() (*Settings, error) {
 		return nil, err
 	}
 	return &s, nil
+}
+
+// writeDefaultSettings serialises defaults to JSON and writes it to path,
+// creating any missing parent directories first.
+func writeDefaultSettings(path string, defaults *Settings) error {
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return err
+	}
+	data, err := json.MarshalIndent(defaults, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, append(data, '\n'), 0o644)
 }
 
 func expandHome(path, home string) (string, error) {

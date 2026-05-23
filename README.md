@@ -55,7 +55,7 @@ ent completion powershell | Out-String | Invoke-Expression
 
 ### 2. Configure your projects root (optional)
 
-By default `ent` uses `~/projects`. Override it in `~/.config/ent/settings.json`:
+By default `ent` uses `~/projects`. On first run, `ent` automatically creates `~/.config/ent/settings.json` with that default. Edit it to point to your preferred location:
 
 ```json
 {
@@ -144,6 +144,12 @@ $projects_root/
 |----------|------|
 | macOS / Linux | `~/.config/ent/settings.json` (or `$XDG_CONFIG_HOME/ent/settings.json`) |
 | Windows | `%APPDATA%\ent\settings.json` |
+
+Set `ENT_CONFIG_PATH` to point `ent` at a specific file, overriding all of the above:
+
+```sh
+export ENT_CONFIG_PATH=/work/shared/ent-config.json
+```
 
 ## Contributing
 

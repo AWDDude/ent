@@ -76,7 +76,8 @@ func TestLoad_TildeExpansion(t *testing.T) {
 }
 
 func TestLoad_MissingSettingsFile(t *testing.T) {
-	t.Setenv("XDG_CONFIG_HOME", t.TempDir()) // empty dir, no settings.json
+	dir := t.TempDir()
+	t.Setenv("XDG_CONFIG_HOME", dir) // empty dir, no settings.json
 	t.Setenv("PROJECTS_ROOT", "")
 
 	cfg, err := Load("")
@@ -84,11 +85,46 @@ func TestLoad_MissingSettingsFile(t *testing.T) {
 
 	home, _ := os.UserHomeDir()
 	assert.Equal(t, filepath.Join(home, "projects"), cfg.ProjectsRoot)
+
+	// Default settings.json should have been created.
+	settingsPath := filepath.Join(dir, "ent", "settings.json")
+	data, err := os.ReadFile(settingsPath)
+	require.NoError(t, err, "default settings.json should have been created")
+
+	var s Settings
+	require.NoError(t, json.Unmarshal(data, &s))
+	assert.Equal(t, "~/projects", s.ProjectsRoot)
 }
 
 func TestSettingsPath_XDG(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", "/custom/xdg")
+	t.Setenv("ENT_CONFIG_PATH", "")
 	path, err := SettingsPath()
 	require.NoError(t, err)
 	assert.Equal(t, "/custom/xdg/ent/settings.json", path)
+}
+
+func TestSettingsPath_ENTConfig(t *testing.T) {
+	t.Setenv("ENT_CONFIG_PATH", "/custom/path/myconfig.json")
+	t.Setenv("XDG_CONFIG_HOME", "/should/be/ignored")
+	path, err := SettingsPath()
+	require.NoError(t, err)
+	assert.Equal(t, "/custom/path/myconfig.json", path)
+}
+
+func TestLoad_ENTConfigEnv(t *testing.T) {
+	dir := t.TempDir()
+	cfgFile := filepath.Join(dir, "myconfig.json")
+	t.Setenv("ENT_CONFIG_PATH", cfgFile)
+	t.Setenv("PROJECTS_ROOT", "")
+
+	// Write a settings file at the custom location.
+	settings := Settings{ProjectsRoot: "/custom/location"}
+	data, err := json.Marshal(settings)
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(cfgFile, data, 0o644))
+
+	cfg, err := Load("")
+	require.NoError(t, err)
+	assert.Equal(t, "/custom/location", cfg.ProjectsRoot)
 }
