@@ -4,7 +4,7 @@
 //  1. Explicit override passed via SetOverride (from --projects-root flag)
 //  2. PROJECTS_ROOT environment variable
 //  3. ~/.config/ent/settings.json (or $XDG_CONFIG_HOME/ent/settings.json)
-//  4. Default: ~/source
+//  4. Default: ~/projects
 package config
 
 import (
