@@ -7,7 +7,7 @@ A fast, opinionated project manager for your terminal. `ent` keeps your projects
 - **Navigate projects** with a fuzzy picker (no external `fzf` dependency)
 - **Create local projects** with `git init` in one command
 - **Clone remote repos** with automatic `org/project` directory layout
-- **Shell integration** for zsh, bash, fish, and PowerShell — `ent cd` actually changes your directory
+- **Shell integration** for zsh, bash, fish, and PowerShell — `ent cd` and `ent new` actually change your directory
 - **Configurable** via `~/.config/ent/settings.json`, env var, or `--projects-root` flag
 - **Single static binary**, no runtime dependencies
 
@@ -37,7 +37,7 @@ make build-all   # all platforms → dist/
 
 ### 1. Add shell integration
 
-One line sets up both the `cd` wrapper **and** tab completion:
+One line sets up the shell wrapper (enables `ent cd` and `ent new` to change your directory) **and** tab completion:
 
 ```sh
 # zsh — add to ~/.zshrc
@@ -75,7 +75,7 @@ export PROJECTS_ROOT=/Users/you/code
 |---------|-------------|
 | `ent list` / `ent ls` | List all projects as `org/project` |
 | `ent cd [name]` | Navigate to a project (fuzzy picker if no name given) |
-| `ent new <name>` | Create `$projects_root/local/<name>` + `git init` |
+| `ent new <name>` | Create `$projects_root/local/<name>` + `git init`, then cd into it |
 | `ent clone <url>` | Clone a repo into `$projects_root/<org>/<project>` |
 | `ent completion <shell>` | Shell cd wrapper + tab completion |
 | `ent version` | Print version, commit, and build date |
@@ -97,11 +97,12 @@ ent cd myorg/app   # matches org/project substring
 
 ### `ent new`
 
-Creates a local project at `$projects_root/local/<name>`:
+Creates a local project at `$projects_root/local/<name>` and navigates into it (requires shell integration):
 
 ```sh
 ent new my-new-service
-# → Created project: /home/you/source/local/my-new-service
+# Created project: /home/you/source/local/my-new-service
+# (shell cd's into the new directory automatically)
 ```
 
 ### `ent clone`

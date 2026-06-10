@@ -152,7 +152,7 @@ func (m *Manager) Clone(rawURL string) (string, error) {
 func defaultGitRunner(dir string, args ...string) error {
 	cmd := exec.Command("git", args...)
 	cmd.Dir = dir
-	cmd.Stdout = os.Stdout
+	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }

@@ -31,6 +31,7 @@ func runNew(cmd *cobra.Command, name string) error {
 		return err
 	}
 
-	fmt.Fprintf(cmd.OutOrStdout(), "Created project: %s\n", path)
+	fmt.Fprintf(cmd.ErrOrStderr(), "Created project: %s\n", path)
+	fmt.Fprintln(cmd.OutOrStdout(), path)
 	return nil
 }

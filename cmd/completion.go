@@ -81,9 +81,9 @@ func shellSnippet(shell string) (string, error) {
 
 const zshSnippet = `# ent shell integration — added by 'ent completion zsh'
 ent() {
-  if [[ "$1" == "cd" ]]; then
+  if [[ "$1" == "cd" || "$1" == "new" ]]; then
     local dir _err
-    dir=$(command ent cd "${@:2}" 2>/tmp/.ent-err)
+    dir=$(command ent "$@" 2>/tmp/.ent-err)
     local rc=$?
     _err=$(cat /tmp/.ent-err 2>/dev/null)
     [[ -n "$_err" ]] && echo "$_err" >&2
@@ -96,9 +96,9 @@ ent() {
 
 const bashSnippet = `# ent shell integration — added by 'ent completion bash'
 ent() {
-  if [[ "$1" == "cd" ]]; then
+  if [[ "$1" == "cd" || "$1" == "new" ]]; then
     local dir _err
-    dir=$(command ent cd "${@:2}" 2>/tmp/.ent-err)
+    dir=$(command ent "$@" 2>/tmp/.ent-err)
     local rc=$?
     _err=$(cat /tmp/.ent-err 2>/dev/null)
     [[ -n "$_err" ]] && echo "$_err" >&2
@@ -111,8 +111,8 @@ ent() {
 
 const fishSnippet = `# ent shell integration — added by 'ent completion fish'
 function ent
-    if test "$argv[1]" = "cd"
-        set dir (command ent cd $argv[2..] 2>/tmp/.ent-err)
+    if test "$argv[1]" = "cd" -o "$argv[1]" = "new"
+        set dir (command ent $argv 2>/tmp/.ent-err)
         set rc $status
         set _err (cat /tmp/.ent-err 2>/dev/null)
         test -n "$_err" && echo $_err >&2
@@ -127,7 +127,7 @@ end
 
 const powershellSnippet = `# ent shell integration — added by 'ent completion powershell'
 function Invoke-Ent {
-    if ($args[0] -eq 'cd') {
+    if ($args[0] -eq 'cd' -or $args[0] -eq 'new') {
         $errFile = [System.IO.Path]::GetTempFileName()
         $dir = & ent @args 2>$errFile
         $rc = $LASTEXITCODE

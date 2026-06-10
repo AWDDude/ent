@@ -16,6 +16,7 @@ func TestShellSnippet_AllShells(t *testing.T) {
 			require.NoError(t, err)
 			assert.NotEmpty(t, snippet)
 			assert.Contains(t, snippet, "cd")
+			assert.Contains(t, snippet, "new", "shell wrapper should intercept 'ent new' for auto-cd")
 		})
 	}
 }
