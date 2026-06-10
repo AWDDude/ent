@@ -141,10 +141,7 @@ $projects_root/
 
 ### Settings file location
 
-| Platform | Path |
-|----------|------|
-| macOS / Linux | `~/.config/ent/settings.json` (or `$XDG_CONFIG_HOME/ent/settings.json`) |
-| Windows | `%APPDATA%\ent\settings.json` |
+`~/.config/ent/settings.json` on all platforms, or `$XDG_CONFIG_HOME/ent/settings.json` if that env var is set.
 
 Set `ENT_CONFIG_PATH` to point `ent` at a specific file, overriding all of the above:
 

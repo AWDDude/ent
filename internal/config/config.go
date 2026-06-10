@@ -11,7 +11,6 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"runtime"
 )
 
 // Settings is the structure of settings.json.
@@ -73,18 +72,6 @@ func SettingsPath() (string, error) {
 
 	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
 		return filepath.Join(xdg, "ent", "settings.json"), nil
-	}
-
-	if runtime.GOOS == "windows" {
-		appData := os.Getenv("APPDATA")
-		if appData == "" {
-			home, err := os.UserHomeDir()
-			if err != nil {
-				return "", err
-			}
-			appData = filepath.Join(home, "AppData", "Roaming")
-		}
-		return filepath.Join(appData, "ent", "settings.json"), nil
 	}
 
 	home, err := os.UserHomeDir()
