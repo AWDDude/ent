@@ -149,6 +149,21 @@ func (m *Manager) Clone(rawURL string) (string, error) {
 	return target, nil
 }
 
+// Remove deletes the project directory at the given absolute path and removes
+// the parent org directory if it becomes empty afterward.
+func (m *Manager) Remove(path string) error {
+	if err := os.RemoveAll(path); err != nil {
+		return fmt.Errorf("could not remove project: %w", err)
+	}
+	// Clean up empty org dir.
+	parent := filepath.Dir(path)
+	entries, err := os.ReadDir(parent)
+	if err == nil && len(entries) == 0 {
+		_ = os.Remove(parent)
+	}
+	return nil
+}
+
 func defaultGitRunner(dir string, args ...string) error {
 	cmd := exec.Command("git", args...)
 	cmd.Dir = dir
