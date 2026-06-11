@@ -7,6 +7,7 @@ A fast, opinionated project manager for your terminal. `ent` keeps your projects
 - **Navigate projects** with a fuzzy picker (no external `fzf` dependency)
 - **Create local projects** with `git init` in one command
 - **Clone remote repos** with automatic `org/project` directory layout
+- **Delete projects** safely with a confirmation prompt
 - **Shell integration** for zsh, bash, fish, and PowerShell — `ent cd` and `ent new` actually change your directory
 - **Configurable** via `~/.config/ent/settings.json`, env var, or `--projects-root` flag
 - **Single static binary**, no runtime dependencies
@@ -77,6 +78,7 @@ export PROJECTS_ROOT=/Users/you/code
 | `ent cd [name]` | Navigate to a project (fuzzy picker if no name given) |
 | `ent new <name>` | Create `$projects_root/local/<name>` + `git init`, then cd into it |
 | `ent clone <url>` | Clone a repo into `$projects_root/<org>/<project>` |
+| `ent rm [name]` | Permanently delete a project (fuzzy picker if no name given) |
 | `ent completion <shell>` | Shell cd wrapper + tab completion |
 | `ent version` | Print version, commit, and build date |
 
@@ -115,6 +117,25 @@ ent clone git@github.com:myorg/myrepo.git
 
 ent clone https://github.com/myorg/myrepo.git
 # → /home/you/source/myorg/myrepo
+```
+
+### `ent rm`
+
+Permanently deletes a project directory. Opens the fuzzy picker if no name is given or multiple projects match. Requires typing the full `org/project` name to confirm before anything is deleted. The parent org directory is removed automatically if it becomes empty.
+
+```sh
+ent rm myapp         # delete project named *myapp*
+ent rm               # fuzzy pick from all projects
+```
+
+```
+WARNING: This action is irreversible.
+Any changes that have not been pushed to a git server will be lost.
+
+Project to delete: myorg/myapp
+
+Type the project name to confirm: myorg/myapp
+Deleted: /home/you/source/myorg/myapp
 ```
 
 ## Project Layout
